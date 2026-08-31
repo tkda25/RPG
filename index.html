@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>LEGEND OF ASTRIA</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>LEGEND OF ASTRIA</h1>
+      <div class="statusbar">
+        <span id="level">Lv 1</span>
+        <span id="hp">HP 30/30</span>
+        <span id="mp">MP 10/10</span>
+        <span id="gold">G 20</span>
+      </div>
+    </header>
+
+    <main>
+      <section id="game-wrap">
+        <canvas id="game" width="640" height="480"></canvas>
+        <div id="overlay" class="hidden"></div>
+      </section>
+
+      <section class="panel">
+        <div id="message">アストリア王国のはずれ。北に町、東に洞窟がある。</div>
+        <div class="buttons">
+          <button data-action="up">↑</button>
+          <button data-action="left">←</button>
+          <button data-action="down">↓</button>
+          <button data-action="right">→</button>
+          <button id="action">しらべる</button>
+          <button id="save">セーブ</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>矢印キー / WASDでも移動できます</footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
