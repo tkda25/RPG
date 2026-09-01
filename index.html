@@ -5,23 +5,32 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>LEGEND OF ASTRIA</title>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
   <div id="app">
-    <header>
-      <h1>LEGEND OF ASTRIA</h1>
-      <div class="statusbar">
-        <span id="level">Lv 1</span><span id="hp">HP 30/30</span><span id="mp">MP 10/10</span><span id="gold">G 20</span><span id="weapon">武器: なし</span><span id="armor">防具: なし</span>
-      </div>
-    </header>
+    <header><h1>LEGEND OF ASTRIA</h1><div class="statusbar"><span id="level">Lv 1</span><span id="hp">HP 30/30</span><span id="mp">MP 10/10</span><span id="gold">G 20</span><span id="weapon">武器: なし</span><span id="armor">防具: なし</span></div></header>
     <main>
       <section id="game-wrap"><canvas id="game" width="640" height="480"></canvas><div id="overlay" class="hidden"></div></section>
-      <section class="panel"><div id="message">アストリア王国のはずれ。北に町、東に洞窟がある。</div><div class="buttons"><button data-action="up">↑</button><button data-action="left">←</button><button data-action="down">↓</button><button data-action="right">→</button><button id="action">しらべる</button><button id="save">セーブ</button></div></section>
+      <section class="panel"><div id="message">アストリア王国のはずれ。北に町、東に洞窟がある。</div><div class="buttons"><button data-action="up">↑</button><button data-action="left">←</button><button data-action="down">↓</button><button data-action="right">→</button><button id="action">しらべる</button><button id="save">セーブ</button><button id="recoverSave">以前のデータを復元</button></div></section>
     </main>
     <footer>矢印キー / WASDでも移動できます</footer>
   </div>
-  <script src="game.js?v=4"></script>
-  <script src="hotfix.js?v=4"></script>
+  <script src="game.js?v=5"></script>
+  <script src="hotfix.js?v=5"></script>
+  <script>
+    document.getElementById('recoverSave').addEventListener('click',function(){
+      if(!confirm('以前の冒険データ（Lv5）を復元しますか？')) return;
+      const recovered={
+        x:13,y:6,level:5,xp:0,hp:62,maxHp:62,mp:22,maxMp:22,atk:22,def:11,gold:182,
+        bossDefeated:true,inBattle:false,inMenu:false,area:'world',dungeonFloor:1,dungeonX:2,dungeonY:1,
+        weapon:'銅のつるぎ',weaponBonus:3,armor:'なし',armorBonus:0,
+        ownedWeapons:['銅のつるぎ'],ownedArmor:[],openedChests:[]
+      };
+      localStorage.setItem('astria-save',JSON.stringify(recovered));
+      localStorage.setItem('astria-save-backup',JSON.stringify(recovered));
+      location.reload();
+    });
+  </script>
 </body>
 </html>
