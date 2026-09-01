@@ -1,0 +1,20 @@
+{
+  "name": "LEGEND OF ASTRIA",
+  "short_name": "ASTRIA",
+  "description": "A retro fantasy RPG adventure.",
+  "id": "/RPG/",
+  "start_url": "/RPG/?source=pwa",
+  "scope": "/RPG/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/RPG/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
