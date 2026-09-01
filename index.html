@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>LEGEND OF ASTRIA</title>
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
   <div id="app">
@@ -16,17 +16,13 @@
     </main>
     <footer>矢印キー / WASDでも移動できます</footer>
   </div>
-  <script src="game.js?v=5"></script>
-  <script src="hotfix.js?v=5"></script>
+  <script src="game.js?v=6"></script>
+  <script src="hotfix.js?v=6"></script>
+  <script src="town.js?v=6"></script>
   <script>
     document.getElementById('recoverSave').addEventListener('click',function(){
       if(!confirm('以前の冒険データ（Lv5）を復元しますか？')) return;
-      const recovered={
-        x:13,y:6,level:5,xp:0,hp:62,maxHp:62,mp:22,maxMp:22,atk:22,def:11,gold:182,
-        bossDefeated:true,inBattle:false,inMenu:false,area:'world',dungeonFloor:1,dungeonX:2,dungeonY:1,
-        weapon:'銅のつるぎ',weaponBonus:3,armor:'なし',armorBonus:0,
-        ownedWeapons:['銅のつるぎ'],ownedArmor:[],openedChests:[]
-      };
+      const recovered={x:13,y:6,level:5,xp:0,hp:62,maxHp:62,mp:22,maxMp:22,atk:22,def:11,gold:182,bossDefeated:true,inBattle:false,inMenu:false,area:'world',dungeonFloor:1,dungeonX:2,dungeonY:1,townX:7,townY:10,weapon:'銅のつるぎ',weaponBonus:3,armor:'なし',armorBonus:0,ownedWeapons:['銅のつるぎ'],ownedArmor:[],openedChests:[]};
       localStorage.setItem('astria-save',JSON.stringify(recovered));
       localStorage.setItem('astria-save-backup',JSON.stringify(recovered));
       location.reload();
