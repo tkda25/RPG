@@ -1,5 +1,5 @@
-const CACHE='astria-pwa-v15';
-const CORE=['/RPG/','/RPG/index.html','/RPG/style.css?v=15','/RPG/game.js?v=15','/RPG/hotfix.js?v=15','/RPG/town.js?v=15','/RPG/visual-upgrade.js?v=15','/RPG/living-town.js?v=15','/RPG/eight-direction.js?v=15','/RPG/battle-upgrade.js?v=15','/RPG/battle-layout.js?v=15','/RPG/manifest.webmanifest?v=15','/RPG/icon.svg?v=15'];
+const CACHE='astria-pwa-v16';
+const CORE=['/RPG/','/RPG/index.html','/RPG/style.css?v=16','/RPG/game.js?v=16','/RPG/hotfix.js?v=16','/RPG/town.js?v=16','/RPG/visual-upgrade.js?v=16','/RPG/living-town.js?v=16','/RPG/eight-direction.js?v=16','/RPG/battle-upgrade.js?v=16','/RPG/battle-layout.js?v=16','/RPG/terrain-visuals.js?v=16','/RPG/manifest.webmanifest?v=16','/RPG/icon.svg?v=16'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;const url=new URL(event.request.url);if(url.origin!==location.origin)return;event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(c=>c.put(event.request,copy));return response}).catch(()=>caches.match(event.request).then(r=>r||caches.match('/RPG/'))))});
