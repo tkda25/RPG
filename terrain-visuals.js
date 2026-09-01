@@ -1,6 +1,5 @@
-// v16: richer 16-bit overworld + battle scenery matched to current terrain.
+// v17: richer 16-bit overworld + safe terrain-aware battle scenery.
 (function(){
-  const oldDrawWorld=window.drawWorld;
   function r(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
   function grass(X,Y){r(X,Y,40,40,'#4b9345');r(X,Y+30,40,10,'#43883d');r(X+5,Y+7,2,8,'#2f7434');r(X+8,Y+5,2,5,'#78bd61');r(X+28,Y+24,2,7,'#347a36');r(X+31,Y+22,2,5,'#70b75a');r(X+16,Y+34,8,2,'#397e38')}
   function water(X,Y){r(X,Y,40,40,'#2874b7');r(X,Y+7,15,3,'#52a5d2');r(X+18,Y+18,18,3,'#1e609d');r(X+5,Y+30,22,2,'#64b1d7')}
@@ -32,7 +31,20 @@
     .terrain-rock{position:absolute;background:#66635d;border:4px solid #4c4a45;z-index:1}.terrain-rock.r1{width:54px;height:38px;left:7%;bottom:18%;clip-path:polygon(12% 35%,36% 0,80% 12%,100% 65%,72% 100%,15% 90%,0 58%)}.terrain-rock.r2{width:42px;height:30px;right:9%;bottom:29%;clip-path:polygon(18% 30%,45% 0,88% 24%,100% 72%,62% 100%,10% 82%,0 48%)}
     .terrain-grass-tuft{position:absolute;width:28px;height:18px;bottom:22%;z-index:1;background:repeating-linear-gradient(100deg,transparent 0 4px,#2e6f35 4px 7px,transparent 7px 10px)}.terrain-grass-tuft.g1{left:9%}.terrain-grass-tuft.g2{right:12%;bottom:31%}
   `;document.head.appendChild(css);
-  function decorate(){const f=document.querySelector('.battle15-field');if(!f)return;f.classList.remove('terrain-grass','terrain-road','terrain-forest','terrain-cave');const t=terrain();f.classList.add('terrain-'+t);f.querySelectorAll('.terrain-rock,.terrain-grass-tuft').forEach(n=>n.remove());if(t==='cave'){f.insertAdjacentHTML('beforeend','<i class="terrain-rock r1"></i><i class="terrain-rock r2"></i>')}else if(t==='grass'||t==='road'||t==='forest'){f.insertAdjacentHTML('beforeend','<i class="terrain-grass-tuft g1"></i><i class="terrain-grass-tuft g2"></i>')}}
-  const obs=new MutationObserver(decorate);obs.observe(overlay,{childList:true,subtree:true});
+  function decorate(){
+    const f=document.querySelector('.battle15-field');if(!f)return;
+    const t=terrain();
+    if(f.dataset.terrainDecorated===t)return;
+    f.dataset.terrainDecorated=t;
+    f.classList.remove('terrain-grass','terrain-road','terrain-forest','terrain-cave');
+    f.classList.add('terrain-'+t);
+    f.querySelectorAll('.terrain-rock,.terrain-grass-tuft').forEach(n=>n.remove());
+    if(t==='cave')f.insertAdjacentHTML('beforeend','<i class="terrain-rock r1"></i><i class="terrain-rock r2"></i>');
+    else f.insertAdjacentHTML('beforeend','<i class="terrain-grass-tuft g1"></i><i class="terrain-grass-tuft g2"></i>');
+  }
+  // Only watch direct overlay replacements. Do not observe decorations inside the battle field,
+  // otherwise adding rocks/grass recursively triggers this observer and freezes encounters.
+  const obs=new MutationObserver(()=>requestAnimationFrame(decorate));
+  obs.observe(overlay,{childList:true,subtree:false});
   if(state.area==='world')drawWorld();
 })();
