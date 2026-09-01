@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#020617"/>
+  <rect x="48" y="48" width="416" height="416" rx="72" fill="#0f172a" stroke="#facc15" stroke-width="16"/>
+  <path d="M256 88l54 82-22 44 32 126-64 84-64-84 32-126-22-44z" fill="#2563eb" stroke="#f8fafc" stroke-width="12"/>
+  <path d="M170 178h172l-38 48h-96z" fill="#facc15"/>
+  <path d="M238 142h36v168h-36z" fill="#e5e7eb"/>
+  <path d="M198 282h116v22H198z" fill="#facc15"/>
+  <path d="M226 304h60l-30 90z" fill="#7c2d12"/>
+  <text x="256" y="448" fill="#f8fafc" text-anchor="middle" font-family="serif" font-size="46" font-weight="700">ASTRIA</text>
+</svg>
