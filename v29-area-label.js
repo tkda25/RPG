@@ -9,6 +9,7 @@
 
   function areaName(){
     if(state.area==='town') return 'アルネ村';
+    if(state.area==='capital') return '王都レグナス';
     if(state.area==='dungeon') return state.dungeonFloor===2 ? '北の洞窟 B1F' : '北の洞窟 1F';
     if(state.area==='interior'){
       const map={home:'民家',weapon:'武器屋',armor:'防具屋',item:'道具屋',inn:'宿屋'};
