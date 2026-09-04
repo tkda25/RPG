@@ -16,6 +16,7 @@
   function selectable(){return [...overlay.querySelectorAll('button:not([disabled])')].filter(b=>b.offsetParent!==null)}
   function paintMenu(){const list=selectable();if(!list.length)return;menuIndex=Math.max(0,Math.min(menuIndex,list.length-1));list.forEach((b,i)=>b.classList.toggle('menu-selected',i===menuIndex))}
   function selectFirst(){menuIndex=0;requestAnimationFrame(paintMenu)}
+  window.astriaSelectFirst=selectFirst;window.astriaPaintMenu=paintMenu;
   function navMenu(dx,dy){const now=Date.now();if(now-lastNav<145)return;lastNav=now;const list=selectable();if(!list.length)return;const d=Math.abs(dy)>=Math.abs(dx)?dy:dx;if(!d)return;menuIndex=(menuIndex+(d>0?1:-1)+list.length)%list.length;paintMenu()}
 
   const base=document.getElementById('stickBase'),knob=document.getElementById('stickKnob');
