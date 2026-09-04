@@ -92,14 +92,14 @@
   }
 
   window.drawCurrent=function(){
-    if(state.area==='interior'&&state.interiorType==='inn'){inn();return}
+    if(!window.astriaTilemapV37&&state.area==='interior'&&state.interiorType==='inn'){inn();return}
     oldDraw.apply(this,arguments);
   };
   window.move=function(dx,dy){
     const was=state.area==='interior'&&state.interiorType==='inn';
     const r=oldMove(dx,dy);
-    if(was&&state.area==='interior'&&state.interiorType==='inn')inn();
+    if(!window.astriaTilemapV37&&was&&state.area==='interior'&&state.interiorType==='inn')inn();
     return r;
   };
-  setInterval(()=>{if(state.area==='interior'&&state.interiorType==='inn'&&!state.inMenu&&!state.inBattle)inn()},180);
+  setInterval(()=>{if(window.astriaTilemapV37)return;if(state.area==='interior'&&state.interiorType==='inn'&&!state.inMenu&&!state.inBattle)inn()},180);
 })();
