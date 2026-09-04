@@ -1,5 +1,6 @@
 // v37: tilemap-based Arne Village + inn, pixel portraits, strict collision.
 (function(){
+  window.astriaTilemapV37=true;
   const A=document.getElementById('btnA'),B=document.getElementById('btnB');
   const prevAction=window.action, prevMove=window.move, prevDraw=window.drawCurrent;
   const P=32, VW=20, VH=15;
@@ -180,8 +181,12 @@
       state.facing=dx>0?'right':dx<0?'left':dy<0?'up':'down';
       const nx=state.interiorX+dx,ny=state.interiorY+dy;
       if(blockedInn(nx,ny)){say('そこには進めない。');return}
-      state.interiorX=nx;state.interiorY=ny;drawInn();
-      if(I[ny][nx]==='X'){state.area='town';state.townX=14;state.townY=10;drawVillage();say('宿屋を出た。')}
+      state.interiorX=nx;state.interiorY=ny;
+      if(I[ny][nx]==='X'){
+        state.area='town';state.interiorType=null;state.townX=14;state.townY=10;
+        drawVillage();say('宿屋を出た。');return;
+      }
+      drawInn();
       return;
     }
     prevMove(dx,dy);
