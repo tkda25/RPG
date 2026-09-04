@@ -1,5 +1,5 @@
-// v40: authoritative scene renderer for Arne Village + inn.
-// Uses dedicated pixel-art assets, a collision map, and a non-blocking bottom dialogue window.
+// v40.1: authoritative scene renderer for Arne Village + inn.
+// Uses dedicated pixel-art assets, strict collision, and a bottom dialogue window.
 (function(){
   'use strict';
   const TILE=32, COLS40=20, ROWS40=15;
@@ -32,7 +32,6 @@
   function loadImage(key,src){return new Promise(resolve=>{const im=new Image();im.onload=()=>{images[key]=im;resolve()};im.onerror=()=>resolve();im.src=src})}
   Promise.all(Object.entries(assetDefs).map(([k,v])=>loadImage(k,v))).then(()=>{assetsReady=true;drawCurrent40()});
 
-  // Dedicated dialogue layer: it never replaces the game canvas.
   const dialog=document.createElement('div');
   dialog.id='v40-dialog'; dialog.className='v40-dialog hidden';
   dialog.innerHTML='<div class="v40-portrait"></div><div class="v40-copy"><b class="v40-name"></b><div class="v40-text"></div></div><div class="v40-choice"></div>';
@@ -49,40 +48,41 @@
     if(choice) ch.innerHTML='<span class="selected">▶ はい</span><span>　いいえ</span>'; else ch.innerHTML='<span>▶ A / B</span>';
     dialog.classList.remove('hidden');
   }
-  function closeDialog(){
-    const cb=dialogState&&dialogState.onClose; dialogState=null; dialog.classList.add('hidden'); state.inMenu=false; if(cb)cb(); drawCurrent40();
+  function closeDialog(){const cb=dialogState&&dialogState.onClose;dialogState=null;dialog.classList.add('hidden');state.inMenu=false;if(cb)cb();drawCurrent40()}
+  function dialogA(){if(!dialogState)return false;if(dialogState.choice){const cb=dialogState.onYes;dialogState=null;dialog.classList.add('hidden');state.inMenu=false;if(cb)cb();drawCurrent40()}else closeDialog();return true}
+  function dialogB(){if(!dialogState)return false;if(dialogState.choice){const cb=dialogState.onNo;dialogState=null;dialog.classList.add('hidden');state.inMenu=false;if(cb)cb();drawCurrent40()}else closeDialog();return true}
+
+  function beginFrame(){
+    ctx.save();
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.globalAlpha=1;
+    ctx.globalCompositeOperation='source-over';
+    ctx.imageSmoothingEnabled=false;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
   }
-  function dialogA(){
-    if(!dialogState)return false;
-    if(dialogState.choice){const cb=dialogState.onYes;dialogState=null;dialog.classList.add('hidden');state.inMenu=false;if(cb)cb();drawCurrent40();}
-    else closeDialog();
-    return true;
-  }
-  function dialogB(){
-    if(!dialogState)return false;
-    if(dialogState.choice){const cb=dialogState.onNo;dialogState=null;dialog.classList.add('hidden');state.inMenu=false;if(cb)cb();drawCurrent40();}
-    else closeDialog();
-    return true;
-  }
+  function endFrame(){ctx.restore()}
 
   function drawSprite(index,gx,gy){
     if(!images.sprites)return;
-    ctx.imageSmoothingEnabled=false;
     ctx.drawImage(images.sprites,index*32,0,32,32,gx*TILE,gy*TILE,32,32);
   }
   function drawBackdrop(key){
-    if(images[key]){ctx.imageSmoothingEnabled=false;ctx.drawImage(images[key],0,0,640,480)}
+    if(images[key])ctx.drawImage(images[key],0,0,640,480);
     else {ctx.fillStyle='#111';ctx.fillRect(0,0,640,480)}
   }
   function drawVillage40(){
+    beginFrame();
     drawBackdrop('arne_bg');
     npcs.forEach(n=>drawSprite(n.sprite,n.x,n.y));
     drawSprite(0,state.townX,state.townY);
+    endFrame();
   }
   function drawInn40(){
+    beginFrame();
     drawBackdrop('inn_bg');
     drawSprite(4,8,7);
     drawSprite(0,state.interiorX,state.interiorY);
+    endFrame();
   }
   function drawCurrent40(){
     if(!assetsReady)return;
@@ -94,7 +94,6 @@
     if(x<0||y<0||x>=COLS40||y>=ROWS40)return true;
     if(['T','H','W'].includes(VILLAGE[y][x]))return true;
     if(npcs.some(n=>n.x===x&&n.y===y))return true;
-    // Well + flowerbeds are real physical props in the art.
     if((x===10&&y===9)||(x===2&&y===5)||(x===16&&y===8))return true;
     return false;
   }
@@ -103,18 +102,12 @@
     return ['#','b','C','S'].includes(INN[y][x]) || (x===8&&y===7);
   }
 
-  function enterArne40(){
-    state.area='town';state.townX=9;state.townY=13;state.inMenu=false;state.interiorType=null;closeOverlay();drawVillage40();say('アルネ村。');
-  }
+  function enterArne40(){state.area='town';state.townX=9;state.townY=13;state.inMenu=false;state.interiorType=null;closeOverlay();drawVillage40();say('アルネ村。')}
   window.enterArneVillage=enterArne40;
   window.drawTown=drawVillage40;
 
-  function enterInn40(){
-    state.area='interior';state.interiorType='inn';state.interiorX=10;state.interiorY=13;state.facing='up';state.inMenu=false;closeOverlay();drawInn40();say('アルネ村 宿屋。');
-  }
-  function leaveInn40(){
-    state.area='town';state.interiorType=null;state.townX=14;state.townY=10;state.inMenu=false;drawVillage40();say('宿屋を出た。');
-  }
+  function enterInn40(){state.area='interior';state.interiorType='inn';state.interiorX=10;state.interiorY=13;state.facing='up';state.inMenu=false;closeOverlay();drawInn40();say('アルネ村 宿屋。')}
+  function leaveInn40(){state.area='town';state.interiorType=null;state.townX=14;state.townY=10;state.inMenu=false;drawVillage40();say('宿屋を出た。')}
 
   window.drawCurrent=function(){
     if(state.area==='town'){drawVillage40();return}
@@ -123,8 +116,7 @@
   };
 
   window.move=function(dx,dy){
-    if(dialogState||state.inBattle)return;
-    if(state.inMenu)return;
+    if(dialogState||state.inBattle||state.inMenu)return;
     if(state.area==='town'){
       state.facing=dx>0?'right':dx<0?'left':dy<0?'up':'down';
       const nx=state.townX+dx,ny=state.townY+dy;
@@ -164,7 +156,6 @@
     prevAction();
   };
 
-  // Bind AB explicitly after all legacy UI scripts. B closes dialogue instead of opening menus.
   if(btnA){const oldA=btnA.onclick;btnA.onclick=function(e){if(dialogState){dialogA();return}if(oldA)oldA.call(btnA,e)}}
   if(btnB){const oldB=btnB.onclick;btnB.onclick=function(e){if(dialogState){dialogB();return}if(oldB)oldB.call(btnB,e)}}
 
@@ -176,6 +167,5 @@
   `;
   document.head.appendChild(css);
 
-  // Repaint if a saved game is already in one of these scenes.
   setTimeout(drawCurrent40,120);
 })();
